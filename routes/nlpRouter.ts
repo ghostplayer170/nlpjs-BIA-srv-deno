@@ -14,7 +14,7 @@ export async function handleNLPRequest(req: Request) {
     // Procesar la consulta con el controlador
     const response = await handleNLPQuery(userQuery);
     return new Response(JSON.stringify(response), { status: 200 });
-  } catch (error) {
+  } catch (_error) {
     return new Response(JSON.stringify({ error: "Failed to process request" }), { status: 500 });
   }
 }
