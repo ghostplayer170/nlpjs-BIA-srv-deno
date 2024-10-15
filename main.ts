@@ -7,10 +7,5 @@ const port = 3000;
 console.log(`NLP.js server running on http://localhost:${port}`);
 
 // Servir las solicitudes
-serve(async (req: Request) => {
-  if (req.method === "POST" && new URL(req.url).pathname === "/nlp") {
-    return await handleNLPRequest(req);  // Maneja las solicitudes POST a /nlp
-  } else {
-    return new Response("Not Found", { status: 404 });
-  }
-}, { port });
+Deno.serve(() => new Response("Hello, world!"));
+
