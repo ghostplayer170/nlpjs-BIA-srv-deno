@@ -1,26 +1,57 @@
-import { dataModel } from '../config/dataModel.ts'; // Importamos el modelo de datos
+import { NlpManager } from 'node-nlp';
+import { dataModel } from '../config/dataModel.ts';
 
-// Simular el procesamiento NLP y generar una consulta DAX basada en la query
+// Crear y configurar el NLP Manager
+const manager = new NlpManager({ languages: ['es'], forceNER: true });
+
+// Añadir Intents y Ejemplos de Entrenamiento
+function addTrainingData() {
+  // Intención: Consultar Ventas
+  manager.addDocument('es', 'Muéstrame las ventas del %date%', 'consultar_ventas');
+  manager.addDocument('es', 'Quiero ver las ventas de %date%', 'consultar_ventas');
+  manager.addDocument('es', 'Dame las ventas del %date%', 'consultar_ventas');
+
+  // Intención: Consultar Unidades
+  manager.addDocument('es', 'Muéstrame las unidades vendidas el %date%', 'consultar_unidades');
+  manager.addDocument('es', 'Cuántas unidades se vendieron el %date%', 'consultar_unidades');
+  manager.addDocument('es', 'Dame las unidades vendidas en %date%', 'consultar_unidades');
+
+  // Definir Entidades: Fechas
+  manager.addNamedEntityText('date', '25/12/2023', ['es'], ['25 de diciembre', '25/12/2023']);
+  manager.addNamedEntityText('date', '01/01/2024', ['es'], ['1 de enero', '01/01/2024']);
+
+  // Puedes añadir más ejemplos de entrenamiento y entidades aquí
+}
+
+// Entrenar el modelo
+export async function trainModel() {
+  addTrainingData();  // Añadir los datos de entrenamiento
+  await manager.train();  // Entrenar el modelo
+  manager.save();  // Guardar el modelo entrenado
+  console.log('NLP Model trained and saved');
+}
+
+// Función para procesar la consulta y generar la consulta DAX
 export async function processNLPQuery(query: string) {
-  const dateRegex = /\b(\d{2}\/\d{2}\/\d{4})\b/;
-  const match = query.match(dateRegex);
+  const response = await manager.process('es', query);  // Procesar la consulta
 
-  if (match) {
-    const date = match[0];
-    // Detectar si en la consulta se refiere a ventas o unidades
-    let measure;
-    if (/ventas/i.test(query)) {
-      measure = dataModel.MEDIDAS_VENTAS ? "MEDIDAS_VENTAS[Vta Comercial P1]" : "VENTACOMERCIAL"; // Mapeamos la medida correcta del modelo de datos
-    } else if (/unidades/i.test(query)) {
-      measure = dataModel.FACT_VENTAS ? "UNIDADESCOMERCIAL" : "UNIDADES";
-    } else {
-      throw new Error("No se encontró una métrica válida en la consulta.");
-    }
+  // Mapeo de la intención y entidades detectadas
+  const intent = response.intent;
+  const dateEntity = response.entities.find(ent => ent.entity === 'date')?.sourceText;
 
-    // Generar la consulta DAX basada en el diccionario de datos y la fecha proporcionada
+  let measure;
+  if (intent === 'consultar_ventas') {
+    measure = dataModel.MEDIDAS_VENTAS ? "MEDIDAS_VENTAS[Vta Comercial P1]" : "VENTACOMERCIAL";
+  } else if (intent === 'consultar_unidades') {
+    measure = dataModel.FACT_VENTAS ? "UNIDADESCOMERCIAL" : "UNIDADES";
+  } else {
+    throw new Error("No se encontró una intención válida.");
+  }
+
+  if (dateEntity) {
     const daxQuery = `
     DEFINE
-        VAR __fecha = DATEVALUE("${date}")
+        VAR __fecha = DATEVALUE("${dateEntity}")
     EVALUATE
         ROW(
             "Resultado",
