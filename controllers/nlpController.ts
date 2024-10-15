@@ -6,7 +6,7 @@ export async function handleNLPQuery(query: string) {
     // Llamar al servicio de NLP para procesar la consulta
     const daxQuery = await processNLPQuery(query);
     return { message: daxQuery };
-  } catch (_error: any) {
-    return { error: "Failed to process query: " + _error.message };
+  } catch (_error) {
+    return { error: "Failed to process query" };
   }
 }
