@@ -7,6 +7,11 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1"
-    ]
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:node-nlp@^4.27.0"
+      ]
+    }
   }
 }
