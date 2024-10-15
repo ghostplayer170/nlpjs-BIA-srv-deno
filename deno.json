@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "dev-main": "deno run --watch --allow-read --allow-write main.ts",
-    "dev-nlpService": "deno run --watch --allow-write --allow-read src/services/nlpService.ts"
+    "dev-main": "deno run --watch --allow-read --allow-write=. --allow-net main.ts",  
+    "dev-nlpService": "deno run --watch --allow-read --allow-write=. src/services/nlpService.ts"  
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"
