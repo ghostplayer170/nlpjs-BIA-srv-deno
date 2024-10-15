@@ -27,7 +27,7 @@ function addTrainingData() {
 export async function trainModel() {
   addTrainingData();  // Añadir los datos de entrenamiento
   await manager.train();  // Entrenar el modelo
-  manager.save();  // Guardar el modelo entrenado
+  //manager.save();  // Guardar el modelo entrenado
   console.log('NLP Model trained and saved');
 }
 
