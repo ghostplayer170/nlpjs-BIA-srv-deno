@@ -37,7 +37,7 @@ export async function processNLPQuery(query: string) {
 
   // Mapeo de la intención y entidades detectadas
   const intent = response.intent;
-  const dateEntity = response.entities.find(ent => ent.entity === 'date')?.sourceText;
+  const dateEntity = response.entities.find((ent: { entity: string; }) => ent.entity === 'date')?.sourceText;
 
   let measure;
   if (intent === 'consultar_ventas') {

@@ -1,0 +1,366 @@
+{
+  "settings": {
+    "languages": [
+      "es"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "es"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "es": {
+        "settings": {
+          "locale": "es",
+          "trainByDomain": false,
+          "tag": "domain-manager-es",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "%date%,del,el,muestram,vent": {
+            "intent": "consultar_ventas",
+            "domain": "default"
+          },
+          "%date%,de,el,quer,vent,ver": {
+            "intent": "consultar_ventas",
+            "domain": "default"
+          },
+          "%date%,dam,del,el,vent": {
+            "intent": "consultar_ventas",
+            "domain": "default"
+          },
+          "%date%,el,muestram,unidad,vend": {
+            "intent": "consultar_unidades",
+            "domain": "default"
+          },
+          "%date%,cuant,el,se,unidad,vend": {
+            "intent": "consultar_unidades",
+            "domain": "default"
+          },
+          "%date%,dam,el,en,unidad,vend": {
+            "intent": "consultar_unidades",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "consultar_ventas": "default",
+          "consultar_unidades": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "Muéstrame las ventas del %date%",
+            "intent": "consultar_ventas"
+          },
+          {
+            "domain": "default",
+            "utterance": "Quiero ver las ventas de %date%",
+            "intent": "consultar_ventas"
+          },
+          {
+            "domain": "default",
+            "utterance": "Dame las ventas del %date%",
+            "intent": "consultar_ventas"
+          },
+          {
+            "domain": "default",
+            "utterance": "Muéstrame las unidades vendidas el %date%",
+            "intent": "consultar_unidades"
+          },
+          {
+            "domain": "default",
+            "utterance": "Cuántas unidades se vendieron el %date%",
+            "intent": "consultar_unidades"
+          },
+          {
+            "domain": "default",
+            "utterance": "Dame las unidades vendidas en %date%",
+            "intent": "consultar_unidades"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "es",
+              "tag": "nlu-es",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "muestram": 1,
+              "el": 1,
+              "vent": 1,
+              "del": 1,
+              "%date%": 1,
+              "quer": 1,
+              "ver": 1,
+              "de": 1,
+              "dam": 1,
+              "unidad": 1,
+              "vend": 1,
+              "cuant": 1,
+              "se": 1,
+              "en": 1
+            },
+            "intents": {
+              "consultar_ventas": 1,
+              "consultar_unidades": 1
+            },
+            "intentFeatures": {
+              "consultar_ventas": {
+                "muestram": 1,
+                "el": 1,
+                "vent": 1,
+                "del": 1,
+                "%date%": 1,
+                "quer": 1,
+                "ver": 1,
+                "de": 1,
+                "dam": 1
+              },
+              "consultar_unidades": {
+                "muestram": 1,
+                "el": 1,
+                "unidad": 1,
+                "vend": 1,
+                "%date%": 1,
+                "cuant": 1,
+                "se": 1,
+                "dam": 1,
+                "en": 1
+              }
+            },
+            "featuresToIntent": {
+              "muestram": [
+                "consultar_ventas",
+                "consultar_unidades"
+              ],
+              "el": [
+                "consultar_ventas",
+                "consultar_unidades"
+              ],
+              "vent": [
+                "consultar_ventas"
+              ],
+              "del": [
+                "consultar_ventas"
+              ],
+              "%date%": [
+                "consultar_ventas",
+                "consultar_unidades"
+              ],
+              "quer": [
+                "consultar_ventas"
+              ],
+              "ver": [
+                "consultar_ventas"
+              ],
+              "de": [
+                "consultar_ventas"
+              ],
+              "dam": [
+                "consultar_ventas",
+                "consultar_unidades"
+              ],
+              "unidad": [
+                "consultar_unidades"
+              ],
+              "vend": [
+                "consultar_unidades"
+              ],
+              "cuant": [
+                "consultar_unidades"
+              ],
+              "se": [
+                "consultar_unidades"
+              ],
+              "en": [
+                "consultar_unidades"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "es",
+                "tag": "nlu-es",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "muestram",
+                "el",
+                "vent",
+                "del",
+                "%date%",
+                "quer",
+                "ver",
+                "de",
+                "dam",
+                "unidad",
+                "vend",
+                "cuant",
+                "se",
+                "en"
+              ],
+              "intents": [
+                "consultar_ventas",
+                "consultar_unidades"
+              ],
+              "perceptrons": [
+                [
+                  0.6228365898132324,
+                  2.0543594360351562,
+                  4.926360130310059,
+                  3.5213170051574707,
+                  2.0543594360351562,
+                  1.4039384126663208,
+                  1.4039384126663208,
+                  1.4039384126663208,
+                  0.7482008337974548,
+                  -2.869532585144043,
+                  -2.869532585144043,
+                  -0.5603624582290649,
+                  -0.5603624582290649,
+                  -0.7557408213615417,
+                  1.0260746073286584
+                ],
+                [
+                  1.2390590906143188,
+                  1.55692458152771,
+                  -2.904399871826172,
+                  -2.1307506561279297,
+                  1.55692458152771,
+                  -0.5942295789718628,
+                  -0.5942295789718628,
+                  -0.5942295789718628,
+                  0.3389664888381958,
+                  4.470608234405518,
+                  4.470608234405518,
+                  0.7531892657279968,
+                  0.7531892657279968,
+                  1.1646926403045654,
+                  0.7768767673025393
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "es",
+        "Muéstrame las ventas del %date%"
+      ],
+      [
+        "es",
+        "Quiero ver las ventas de %date%"
+      ],
+      [
+        "es",
+        "Dame las ventas del %date%"
+      ],
+      [
+        "es",
+        "Muéstrame las unidades vendidas el %date%"
+      ],
+      [
+        "es",
+        "Cuántas unidades se vendieron el %date%"
+      ],
+      [
+        "es",
+        "Dame las unidades vendidas en %date%"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {
+      "es": {
+        "date": {
+          "name": "date",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "25/12/2023",
+              "texts": [
+                "25 de diciembre",
+                "25/12/2023"
+              ]
+            },
+            {
+              "option": "01/01/2024",
+              "texts": [
+                "1 de enero",
+                "01/01/2024"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {}
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {
+    "consultar_ventas": {
+      "date": {
+        "intent": "consultar_ventas",
+        "entity": "date",
+        "mandatory": false,
+        "locales": {}
+      }
+    },
+    "consultar_unidades": {
+      "date": {
+        "intent": "consultar_unidades",
+        "entity": "date",
+        "mandatory": false,
+        "locales": {}
+      }
+    }
+  }
+}
