@@ -66,7 +66,7 @@ export function processNLPQuery(query: string) {
     // Generar la consulta DAX para una fecha específica
     const daxQuery = `
     DEFINE
-        VAR __fecha = DATEVALUE("${date}")
+        VAR __fecha = DATEVALUE("${dateEntity}")
     EVALUATE
         ROW(
             "Resultado",
