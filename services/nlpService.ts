@@ -1,7 +1,7 @@
 import { dataModel } from '../config/dataModel.ts'; // Importamos el modelo de datos
 
 // Simular el procesamiento NLP y generar una consulta DAX basada en la query
-export async function processNLPQuery(query: string) {
+export function processNLPQuery(query: string) {
   // Expresiones regulares para capturar fechas individuales y rangos de fechas con distintos conectores
   const singleDateRegex = /\b(\d{2}\/\d{2}\/\d{4})\b/;
   const rangeDateRegex = /(?:entre|en)\s(\d{2}\/\d{2}\/\d{4})\s(?:y|entre)\s(\d{2}\/\d{2}\/\d{4})/i;
