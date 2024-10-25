@@ -76,7 +76,7 @@ export function processNLPQuery(query: string) {
             )
         )
     `;
-    return { message: daxQuery };
+    return { daxQuery: daxQuery };
 
   } else {
     throw new Error("No se encontró una fecha válida en la consulta.");
