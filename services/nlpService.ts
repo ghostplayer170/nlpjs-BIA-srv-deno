@@ -43,7 +43,7 @@ export function processNLPQuery(query: string) {
   }
 
   // Nueva expresión regular para detectar "desglosar por categoría"
-  const groupByCategory = /desglosar por categoría/i.test(query); // Detecta si la consulta menciona "desglosar por categoría"
+  const groupByCategory = ((/desglosar por categoría/i.test(query)) || (/desglósame por categoría/i.test(query)) || (/desglosado por categoría/i.test(query)));
   
   // Si se detectó un rango de fechas
   if (matchRange) {
@@ -67,8 +67,8 @@ export function processNLPQuery(query: string) {
           VAR __fechaFin = DATEVALUE("${endDate}")
       EVALUATE
           SUMMARIZE(
-              ${dataModel.FACT_VENTAS.TABLE},  // Tabla donde se encuentra el campo de categoría
-              ${dataModel.FACT_VENTAS.CATEGORIA},  // Columna de categoría para agrupar
+              ${dataModel.FACT_VENTAS.TABLE},  
+              ${dataModel.FACT_VENTAS.CATEGORIA},  
               "Total",
               CALCULATE(
                   ${measure},  // Mapeo de la medida correcta
@@ -85,12 +85,13 @@ export function processNLPQuery(query: string) {
       EVALUATE
           ROW(
               "Resultado",
-              CALCULATE(
-                  ${measure},  // Mapeo de la medida correcta
-                  ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] >= __fechaInicio &&
-                  ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] <= __fechaFin
-                  ${categoryFilter ? " , " + categoryFilter : ""}
-              )
+              FORMAT(
+                CALCULATE(
+                    ${measure},  
+                    ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] >= __fechaInicio &&
+                    ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] <= __fechaFin
+                    ${categoryFilter ? " , " + categoryFilter : ""}
+              ), "0.00")
           )
       `;
 
@@ -107,11 +108,11 @@ export function processNLPQuery(query: string) {
           VAR __fecha = DATEVALUE("${date}")
       EVALUATE
           SUMMARIZE(
-              ${dataModel.FACT_VENTAS.TABLE},  // Tabla donde se encuentra el campo de categoría
-              ${dataModel.FACT_VENTAS.CATEGORIA},  // Columna de categoría para agrupar
+              ${dataModel.FACT_VENTAS.TABLE},  
+              ${dataModel.FACT_VENTAS.CATEGORIA}, 
               "Total",
               CALCULATE(
-                  ${measure},  // Mapeo de la medida correcta
+                  ${measure},  
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] = __fecha
                   ${categoryFilter ? " , " + categoryFilter : ""}
               )
@@ -123,11 +124,12 @@ export function processNLPQuery(query: string) {
       EVALUATE
           ROW(
               "Resultado",
+              FORMAT(
               CALCULATE(
-                  ${measure},  // Mapeo de la medida correcta
+                  ${measure},  
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] = __fecha
                   ${categoryFilter ? " , " + categoryFilter : ""}
-              )
+              ), "0.00")
           )
       `;
 
