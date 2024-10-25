@@ -7,13 +7,18 @@ export function processNLPQuery(query: string) {
   const rangeDateRegex =
     /(?:entre|en)\s(\d{2}\/\d{2}\/\d{4})\s(?:y|entre)\s(\d{2}\/\d{2}\/\d{4})/i;
 
+  // Nueva expresión regular para capturar un filtro por categoría, e.g., "filtrar por categoría Electrónica"
+  const categoryRegex = /categoría\s([\wáéíóúÁÉÍÓÚ]+)/i;
+
   // Intentar encontrar un rango de fechas
   const matchRange = query.match(rangeDateRegex);
   // Intentar encontrar una única fecha
   const matchSingle = query.match(singleDateRegex);
+  // Intentar encontrar una categoría en la consulta (después de "categoría")
+  const matchCategory = query.match(categoryRegex);
 
   let measure;
-  const groupByCategory = /desglosar por categoria/i.test(query); // Detecta si la consulta menciona "categoría" para desglosar
+  let categoryFilter = "";  // Variable para almacenar el filtro por categoría si se encuentra
 
   // Detectar si en la consulta se refiere a "ventas" o "unidades" y asignar la medida correcta
   if (/ventas/i.test(query)) {
@@ -31,6 +36,15 @@ export function processNLPQuery(query: string) {
     return { error: "No se encontró una métrica válida en la consulta." };
   }
 
+  // Verificar si hay un filtro de categoría en la consulta
+  if (matchCategory) {
+    const category = matchCategory[1];  // Obtener la categoría del match
+    categoryFilter = `${dataModel.FACT_VENTAS.TABLE}[${dataModel.FACT_VENTAS.CATEGORIA}] = "${category}"`;
+  }
+
+  // Nueva expresión regular para detectar "desglosar por categoría"
+  const groupByCategory = /desglosar por categoría/i.test(query); // Detecta si la consulta menciona "desglosar por categoría"
+  
   // Si se detectó un rango de fechas
   if (matchRange) {
     let startDate = matchRange[1];
@@ -45,7 +59,7 @@ export function processNLPQuery(query: string) {
       [startDate, endDate] = [endDate, startDate]; // Intercambiar si las fechas están en orden incorrecto
     }
 
-    // Generar la consulta DAX para un rango de fechas con o sin desglose por categoría
+    // Generar la consulta DAX para un rango de fechas con o sin desglose por categoría, y con posible filtro de categoría
     const daxQuery = groupByCategory
       ? `
       DEFINE
@@ -55,11 +69,12 @@ export function processNLPQuery(query: string) {
           SUMMARIZE(
               ${dataModel.FACT_VENTAS.TABLE},  // Tabla donde se encuentra el campo de categoría
               ${dataModel.FACT_VENTAS.CATEGORIA},  // Columna de categoría para agrupar
-              "Resultado",
+              "Total",
               CALCULATE(
                   ${measure},  // Mapeo de la medida correcta
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] >= __fechaInicio &&
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] <= __fechaFin
+                  ${categoryFilter ? " , " + categoryFilter : ""}
               )
           )
       `
@@ -74,6 +89,7 @@ export function processNLPQuery(query: string) {
                   ${measure},  // Mapeo de la medida correcta
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] >= __fechaInicio &&
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] <= __fechaFin
+                  ${categoryFilter ? " , " + categoryFilter : ""}
               )
           )
       `;
@@ -84,7 +100,7 @@ export function processNLPQuery(query: string) {
   } else if (matchSingle) {
     const date = matchSingle[0];
 
-    // Generar la consulta DAX para una fecha específica con o sin desglose por categoría
+    // Generar la consulta DAX para una fecha específica con o sin desglose por categoría, y con posible filtro de categoría
     const daxQuery = groupByCategory
       ? `
       DEFINE
@@ -93,10 +109,11 @@ export function processNLPQuery(query: string) {
           SUMMARIZE(
               ${dataModel.FACT_VENTAS.TABLE},  // Tabla donde se encuentra el campo de categoría
               ${dataModel.FACT_VENTAS.CATEGORIA},  // Columna de categoría para agrupar
-              "Resultado",
+              "Total",
               CALCULATE(
                   ${measure},  // Mapeo de la medida correcta
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] = __fecha
+                  ${categoryFilter ? " , " + categoryFilter : ""}
               )
           )
       `
@@ -109,6 +126,7 @@ export function processNLPQuery(query: string) {
               CALCULATE(
                   ${measure},  // Mapeo de la medida correcta
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] = __fecha
+                  ${categoryFilter ? " , " + categoryFilter : ""}
               )
           )
       `;
