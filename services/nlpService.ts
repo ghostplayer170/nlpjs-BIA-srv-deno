@@ -70,12 +70,13 @@ export function processNLPQuery(query: string) {
               ${dataModel.FACT_VENTAS.TABLE},  
               ${dataModel.FACT_VENTAS.CATEGORIA},  
               "Total",
+              FORMAT(
               CALCULATE(
                   ${measure},  // Mapeo de la medida correcta
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] >= __fechaInicio &&
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] <= __fechaFin
                   ${categoryFilter ? " , " + categoryFilter : ""}
-              )
+              ), "0.00")
           )
       `
       : `
@@ -111,11 +112,12 @@ export function processNLPQuery(query: string) {
               ${dataModel.FACT_VENTAS.TABLE},  
               ${dataModel.FACT_VENTAS.CATEGORIA}, 
               "Total",
+              FORMAT(
               CALCULATE(
                   ${measure},  
                   ${dataModel.CALENDARIO_P1.TABLE}[${dataModel.CALENDARIO_P1.DATE}] = __fecha
                   ${categoryFilter ? " , " + categoryFilter : ""}
-              )
+              ), "0.00")
           )
       `
       : `
